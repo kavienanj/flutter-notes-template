@@ -7,7 +7,11 @@ part 'user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final FirebaseAuth authService;
-  UserBloc(this.authService) : super(UserInitial()) {
+  UserBloc(this.authService) : super(
+    authService.currentUser != null
+      ? UserSuccess(authService.currentUser!)
+      : UserEmpty()
+  ) {
   
     on<UserCreate>((event, emit) async {
       try {
@@ -16,11 +20,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           email: event.email,
           password: event.password,
         );
-        emit(
-          userCredential.user != null
-            ? UserSuccess(userCredential.user!)
-            : UserError(errorMessage: "Something went wrong, Try again!")
-        );
+        if (userCredential.user != null) {
+          add(UserSignIn(event.email, event.password));
+        } else {
+          emit(UserError(errorMessage: "Something went wrong, Try again!"));
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           emit(UserError(errorMessage: "The password provided is too weak"));
@@ -39,7 +43,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         );
         emit(
           userCredential.user != null
-            ? UserSuccess(userCredential.user!)
+            ? UserSuccess(authService.currentUser!)
             : UserError(errorMessage: "Something went wrong, Try again!")
         );
       } on FirebaseAuthException catch (e) {
@@ -51,5 +55,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       }
     });
 
+    on<UserSignOut>((event, emit) async {
+      await FirebaseAuth.instance.signOut();
+      emit(UserEmpty());
+    });
+  
   }
 }

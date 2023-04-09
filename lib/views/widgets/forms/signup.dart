@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_notes_template/bloc/user_bloc/user_bloc.dart';
+import 'package:flutter_notes_template/views/home/notes_screen.dart';
 import 'package:flutter_notes_template/views/widgets/core/buttons.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:flutter_notes_template/views/widgets/core/form_fields.dart';
@@ -14,15 +15,16 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
 
-  final _emailOrPhoneNumberInputLabel = "Email or phone number";
+  final _emailInputLabel = "Email";
   final _passwordInputLabel = "Password";
+  final _passwordConfirmInputLabel = "Confirm Password";
   late FormGroup _form;
 
   @override
   void initState() {
     super.initState();
     _form = FormGroup({
-      _emailOrPhoneNumberInputLabel: FormControl<String>(
+      _emailInputLabel: FormControl<String>(
         validators: [
           Validators.required,
           Validators.email,
@@ -34,11 +36,15 @@ class _SignUpFormState extends State<SignUpForm> {
           Validators.minLength(8),
         ],
       ),
-    });
+      _passwordConfirmInputLabel: FormControl<String>(),
+    },
+    validators: [
+      Validators.mustMatch(_passwordInputLabel, _passwordConfirmInputLabel),
+    ]);
   }
 
   void _createUser() => context.read<UserBloc>().add(UserCreate(
-    _form.controls[_emailOrPhoneNumberInputLabel]!.value as String,
+    _form.controls[_emailInputLabel]!.value as String,
     _form.controls[_passwordInputLabel]!.value as String,
   ));
 
@@ -51,29 +57,40 @@ class _SignUpFormState extends State<SignUpForm> {
         child: Column(
           children: <Widget>[
             CustomReactiveTextField(
-              formControlName: _emailOrPhoneNumberInputLabel,
+              formControlName: _emailInputLabel,
             ),
             CustomReactivePasswordField(
               formControlName: _passwordInputLabel,
               helperText: "8 or more characters",
             ),
-            BlocBuilder<UserBloc, UserState>(
+            CustomReactivePasswordField(
+              formControlName: _passwordConfirmInputLabel,
+            ),
+            BlocConsumer<UserBloc, UserState>(
+              listener: (context, state) {
+                if (state is UserSuccess) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NotesScreen()),
+                  );
+                }
+              },
               builder: (context, state) {
-                if (state is UserLoading) {
-                  return const CircularProgressIndicator();
-                } else if (state is UserSuccess) {
-                  return Text("Created account ${state.user}");
-                } else if (state is UserError) {
-                  _form.controls[_emailOrPhoneNumberInputLabel]!.setErrors({
+                if (state is UserError) {
+                  _form.controls[_emailInputLabel]!.setErrors({
                     state.errorMessage: true,
                   });
                 }
-                return ReactiveFormConsumer(
-                  builder: (_, __, ___) => LongElevatedButton(
-                    label: 'Create New User',
-                    onPressed: _form.valid ? _createUser : null,
-                  ),
-                );
+                if (state is UserEmpty || state is UserError) {
+                  return ReactiveFormConsumer(
+                    builder: (context, form, child) => LongElevatedButton(
+                      label: 'Create New User',
+                      onPressed: _form.valid ? _createUser : null,
+                    ),
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
               },
             ),
           ],

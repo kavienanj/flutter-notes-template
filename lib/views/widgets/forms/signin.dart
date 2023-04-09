@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_notes_template/bloc/user_bloc/user_bloc.dart';
+import 'package:flutter_notes_template/views/home/notes_screen.dart';
 import 'package:flutter_notes_template/views/widgets/core/buttons.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:flutter_notes_template/views/widgets/core/form_fields.dart';
@@ -14,7 +15,7 @@ class SignInForm extends StatefulWidget {
 
 class _SignInFormState extends State<SignInForm> {
 
-  final _emailOrPhoneNumberInputLabel = "Email or phone number";
+  final _emailInputLabel = "Email";
   final _passwordInputLabel = "Password";
   late FormGroup _form;
 
@@ -22,7 +23,7 @@ class _SignInFormState extends State<SignInForm> {
   void initState() {
     super.initState();
     _form = FormGroup({
-      _emailOrPhoneNumberInputLabel: FormControl<String>(
+      _emailInputLabel: FormControl<String>(
         validators: [
           Validators.required,
           Validators.email,
@@ -37,7 +38,7 @@ class _SignInFormState extends State<SignInForm> {
   }
 
   void _signInUser() => context.read<UserBloc>().add(UserSignIn(
-    _form.controls[_emailOrPhoneNumberInputLabel]!.value as String,
+    _form.controls[_emailInputLabel]!.value as String,
     _form.controls[_passwordInputLabel]!.value as String,
   ));
 
@@ -50,28 +51,34 @@ class _SignInFormState extends State<SignInForm> {
         child: Column(
           children: <Widget>[
             CustomReactiveTextField(
-              formControlName: _emailOrPhoneNumberInputLabel,
+              formControlName: _emailInputLabel,
             ),
             CustomReactivePasswordField(
               formControlName: _passwordInputLabel,
             ),
-            BlocBuilder<UserBloc, UserState>(
+            BlocConsumer<UserBloc, UserState>(
+              listener: (context, state) {
+                if (state is UserSuccess) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NotesScreen()),
+                  );
+                }
+              },
               builder: (context, state) {
-                if (state is UserLoading) {
-                  return const CircularProgressIndicator();
-                } else if (state is UserSuccess) {
-                  return Text("Created account ${state.user}");
-                } else if (state is UserError) {
-                  _form.controls[_emailOrPhoneNumberInputLabel]!.setErrors({
+                if (state is UserError) {
+                  _form.controls[_emailInputLabel]!.setErrors({
                     state.errorMessage: true,
                   });
                 }
-                return ReactiveFormConsumer(
-                  builder: (_, __, ___) => LongElevatedButton(
+                if (state is UserEmpty || state is UserError) {
+                  return LongElevatedButton(
                     label: 'Sign In',
                     onPressed: _signInUser,
-                  ),
-                );
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
               },
             ),
           ],
