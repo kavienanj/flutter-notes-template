@@ -25,9 +25,11 @@ class CustomReactivePasswordField extends StatelessWidget {
   const CustomReactivePasswordField({
     super.key,
     required this.formControlName,
+    this.helperText,
   });
 
   final String formControlName;
+  final String? helperText;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,10 @@ class CustomReactivePasswordField extends StatelessWidget {
       child: ReactiveTextField(
         formControlName: formControlName,
         obscureText: true,
-        decoration: InputDecoration(labelText: formControlName),
+        decoration: InputDecoration(
+          labelText: formControlName,
+          helperText: helperText,
+        ),
       ),
     );
   }

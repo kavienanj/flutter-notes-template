@@ -4,6 +4,4 @@ class FirebaseService {
 
   FirebaseService({required this.auth});
   final FirebaseAuth auth;
-
-  bool isSignedIn() => auth.currentUser != null;
 }

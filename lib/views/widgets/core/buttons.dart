@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MoriiLongElevatedButton extends StatelessWidget {
-  const MoriiLongElevatedButton({
+class LongElevatedButton extends StatelessWidget {
+  const LongElevatedButton({
     super.key,
     required this.label,
     this.onPressed,

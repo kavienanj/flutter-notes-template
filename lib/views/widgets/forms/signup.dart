@@ -5,14 +5,14 @@ import 'package:flutter_notes_template/views/widgets/core/buttons.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:flutter_notes_template/views/widgets/core/form_fields.dart';
 
-class SignInForm extends StatefulWidget {
-  const SignInForm({super.key});
+class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
 
   @override
-  State<SignInForm> createState() => _SignInFormState();
+  State<SignUpForm> createState() => _SignUpFormState();
 }
 
-class _SignInFormState extends State<SignInForm> {
+class _SignUpFormState extends State<SignUpForm> {
 
   final _emailOrPhoneNumberInputLabel = "Email or phone number";
   final _passwordInputLabel = "Password";
@@ -31,12 +31,13 @@ class _SignInFormState extends State<SignInForm> {
       _passwordInputLabel: FormControl<String>(
         validators: [
           Validators.required,
+          Validators.minLength(8),
         ],
       ),
     });
   }
 
-  void _signInUser() => context.read<UserBloc>().add(UserSignIn(
+  void _createUser() => context.read<UserBloc>().add(UserCreate(
     _form.controls[_emailOrPhoneNumberInputLabel]!.value as String,
     _form.controls[_passwordInputLabel]!.value as String,
   ));
@@ -54,6 +55,7 @@ class _SignInFormState extends State<SignInForm> {
             ),
             CustomReactivePasswordField(
               formControlName: _passwordInputLabel,
+              helperText: "8 or more characters",
             ),
             BlocBuilder<UserBloc, UserState>(
               builder: (context, state) {
@@ -68,8 +70,8 @@ class _SignInFormState extends State<SignInForm> {
                 }
                 return ReactiveFormConsumer(
                   builder: (_, __, ___) => LongElevatedButton(
-                    label: 'Sign In',
-                    onPressed: _signInUser,
+                    label: 'Create New User',
+                    onPressed: _form.valid ? _createUser : null,
                   ),
                 );
               },
