@@ -17,7 +17,6 @@ class Note {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'title': title,
       'description': description,
       'index': index,
