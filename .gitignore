@@ -1,6 +1,7 @@
 # Ignore Firebase options file
 lib/firebase_options.dart
 .firebaserc
+.firebase/
 
 # Ignore Platforms
 android/
