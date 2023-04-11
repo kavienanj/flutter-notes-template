@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_notes_template/bloc/user_bloc/user_bloc.dart';
+import 'package:flutter_notes_template/services/firebase_service.dart';
 import 'package:flutter_notes_template/views/auth/signin_screen.dart';
 import 'package:flutter_notes_template/views/widgets/notes/note_card.dart';
 
-class NotesScreen extends StatefulWidget {
+class NotesScreen extends StatelessWidget {
   const NotesScreen({super.key});
 
-  @override
-  State<NotesScreen> createState() => _NotesScreenState();
-}
-
-class _NotesScreenState extends State<NotesScreen> {
   @override
   Widget build(BuildContext context) {
     final userBloc = context.read<UserBloc>();
     final userEmail = (userBloc.state as UserSuccess).user.email;
-    const noOfNotes = 2;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
@@ -39,19 +34,31 @@ class _NotesScreenState extends State<NotesScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(30, 25, 30, 0),
-        child: GridView.builder(
-          itemCount: noOfNotes + 1,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            crossAxisSpacing: 15,
-            mainAxisSpacing: 15,
-          ),
-          itemBuilder: (context, i) => i == noOfNotes
-            ? const NoteCard()
-            : NoteCard(
-                title: "Title of Note $i",
-                description: "Descrption of note $i",
+        child: StreamBuilder(
+          stream: context.read<FirebaseService>().getNotesStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text("Something went wrong try again!"),
+              );
+            } else if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final notes = snapshot.data!;
+            return GridView.builder(
+              itemCount: notes.length + 1,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 15,
+                mainAxisSpacing: 15,
               ),
+              itemBuilder: (context, i) => i == 0
+                ? const NoteCard()
+                : NoteCard(note: notes[i - 1]),
+            );
+          }
         ),
       ),
     );

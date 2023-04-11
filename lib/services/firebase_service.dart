@@ -13,15 +13,22 @@ class FirebaseService {
 
   static const _notesDbKey = 'notes';
 
-  Future<void> createNote(Map<String, dynamic> json) async {
-    await db.collection(_notesDbKey).doc().set(json);
+  Future<Note> createNote(Map<String, dynamic> json) async {
+    final docRef = await db.collection(_notesDbKey).add(json);
+    return Note.fromJson(json..addEntries([
+      MapEntry('id', docRef.id),
+    ]));
   }
 
   Future<void> editNote(Note note) async {
     await db.collection(_notesDbKey).doc(note.id).set(note.toJson());
   }
 
-  Stream<List<Note>> getNotesesStream() {
+  Future<void> deleteNote(Note note) async {
+    await db.collection(_notesDbKey).doc(note.id).delete();
+  }
+
+  Stream<List<Note>> getNotesStream() {
     final notesSnaps = db.collection(_notesDbKey).snapshots();
     return notesSnaps.map<List<Note>>(
       (snap) => snap.docs.map<Note>(
