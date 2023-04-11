@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 class NoteTextField extends StatelessWidget {
   const NoteTextField({
     super.key, 
-    required this.controller,
+    this.text,
     required this.fontSize,
     this.hintText = '',
     this.fontWeight,
     this.multiline = false,
-    required this.onEditingComplete,
+    required this.onChanged,
   });
 
-  final TextEditingController controller;
+  final String? text;
   final double fontSize;
   final FontWeight? fontWeight;
   final String hintText;
-  final VoidCallback onEditingComplete;
+  final void Function(String?) onChanged;
   final bool multiline;
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
+    return TextFormField(
+      initialValue: text,
       style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
       maxLines: multiline ? null : 1,
       keyboardType: multiline ? TextInputType.multiline : null,
@@ -29,7 +29,7 @@ class NoteTextField extends StatelessWidget {
         hintText: hintText,
         border: InputBorder.none,
       ),
-      onEditingComplete: onEditingComplete,
+      onChanged: onChanged,
     );
   }
 }

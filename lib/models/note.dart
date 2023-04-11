@@ -4,7 +4,9 @@ class Note {
   final String description;
   final int index;
 
-  Note(this.id, this.title, this.description, this.index);
+  const Note(this.id, this.title, this.description, this.index);
+
+  bool get hasContent => title.isNotEmpty || description.isNotEmpty;
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(

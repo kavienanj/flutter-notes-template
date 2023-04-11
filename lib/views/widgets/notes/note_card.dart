@@ -1,46 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_notes_template/bloc/note_bloc/note_bloc.dart';
+import 'package:flutter_notes_template/models/note.dart';
+import 'package:flutter_notes_template/services/firebase_service.dart';
 import 'package:flutter_notes_template/views/widgets/notes/note_edit_dialog.dart';
 
-class NoteCard extends StatefulWidget {
-  const NoteCard({super.key, this.title, this.description});
-  final String? title;
-  final String? description;
+class NoteCard extends StatelessWidget {
+  const NoteCard({super.key, this.note});
+  final Note? note;
 
-  @override
-  State<NoteCard> createState() => _NoteCardState();
-}
-
-class _NoteCardState extends State<NoteCard> {
-  late TextEditingController titleController;
-  late TextEditingController descriptionController;
-
-  @override
-  void initState() {
-    super.initState();
-    titleController = TextEditingController(text: widget.title);
-    descriptionController = TextEditingController(text: widget.description);
-  }
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    descriptionController.dispose();
-    super.dispose();
-  }
-
-  void _showNoteDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (context) => NoteEditDialog(
-        titleController: titleController,
-        descriptionController: descriptionController,
+  void _showNoteDialog(BuildContext context) async => await showDialog(
+    context: context,
+    builder: (context) => BlocProvider(
+      create: (context) => NoteBloc(
+        service: context.read<FirebaseService>(),
+        note: note,
       ),
-    );
-    setState(() {});
-  }
+      child: const NoteEditDialog(),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
+    final hasTitle = note?.title.isNotEmpty ?? false;
+    final hasDescription = note?.description.isNotEmpty ?? false;
     return PhysicalModel(
       borderRadius: BorderRadius.circular(10.0),
       color: Colors.white,
@@ -57,29 +40,21 @@ class _NoteCardState extends State<NoteCard> {
         title: Padding(
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
           child: Text(
-            titleController.text.isNotEmpty
-              ? titleController.text
-              : "New Note",
+            hasTitle ? note!.title : "New Note",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: titleController.text.isNotEmpty
-                ? Colors.black
-                : Colors.grey,
+              color: hasTitle ? Colors.black : Colors.grey,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ),
         subtitle: Text(
-          descriptionController.text.isNotEmpty
-            ? descriptionController.text
-            : "What's in your mind?",
+          hasDescription ? note!.description : "What's in your mind?",
           style: TextStyle(
             fontSize: 16,
-            color: descriptionController.text.isNotEmpty
-              ? Colors.black
-              : Colors.grey,
+            color: hasDescription ? Colors.black : Colors.grey,
           ),
           overflow: TextOverflow.fade,
         ),
