@@ -24,9 +24,8 @@ class NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasTitle = note?.title.isNotEmpty ?? false;
     final hasDescription = note?.description.isNotEmpty ?? false;
-    return PhysicalModel(
+    return Material(
       borderRadius: BorderRadius.circular(10.0),
-      color: Colors.white,
       elevation: 4,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),

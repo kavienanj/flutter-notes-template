@@ -53,6 +53,7 @@ class NotesScreen extends StatelessWidget {
                 crossAxisCount: 4,
                 crossAxisSpacing: 15,
                 mainAxisSpacing: 15,
+                childAspectRatio: 1.5,
               ),
               itemBuilder: (context, i) => i == 0
                 ? const NoteCard()
