@@ -11,6 +11,22 @@ class FirebaseService {
   final FirebaseAuth auth;
   final FirebaseFirestore db;
 
+  // AUTH
+
+  bool get userSignedIn => auth.currentUser != null;
+
+  User get user => auth.currentUser!;
+
+  Future<UserCredential> createUser(String email, String password) =>
+    auth.createUserWithEmailAndPassword(email: email, password: password);
+
+  Future<UserCredential> signInUser(String email, String password) =>
+    auth.signInWithEmailAndPassword(email: email, password: password);
+
+  Future<void> signOutUser() => auth.signOut();
+
+  // FIRESTORE
+
   static const _notesDbKey = 'notes';
 
   Future<Note> createNote(Map<String, dynamic> json) async {

@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         Provider<FirebaseService>.value(value: service),
-        BlocProvider(create: (context) => UserBloc(service.auth)),
+        BlocProvider(create: (context) => UserBloc(service)),
       ],
       child: ReactiveFormConfig(
         validationMessages: GlobalFormConfig.validationMessages,

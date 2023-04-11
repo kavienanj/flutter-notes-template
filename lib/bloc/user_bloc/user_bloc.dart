@@ -1,25 +1,21 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_notes_template/services/firebase_service.dart';
 
 part 'user_event.dart';
 part 'user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
-  final FirebaseAuth authService;
-  UserBloc(this.authService) : super(
-    authService.currentUser != null
-      ? UserSuccess(authService.currentUser!)
-      : UserEmpty()
+  final FirebaseService service;
+  UserBloc(this.service) : super(
+    service.userSignedIn ? UserSuccess(service.user) : UserEmpty()
   ) {
   
     on<UserCreate>((event, emit) async {
       try {
         emit(UserLoading());
-        final userCredential = await authService.createUserWithEmailAndPassword(
-          email: event.email,
-          password: event.password,
-        );
+        final userCredential = await service.createUser(event.email, event.password);
         if (userCredential.user != null) {
           add(UserSignIn(event.email, event.password));
         } else {
@@ -37,13 +33,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<UserSignIn>((event, emit) async {
       try {
         emit(UserLoading());
-        final userCredential = await authService.signInWithEmailAndPassword(
-          email: event.email,
-          password: event.password,
-        );
+        final userCredential = await service.signInUser(event.email, event.password);
         emit(
           userCredential.user != null
-            ? UserSuccess(authService.currentUser!)
+            ? UserSuccess(service.user)
             : UserError(errorMessage: "Something went wrong, Try again!")
         );
       } on FirebaseAuthException catch (e) {
@@ -56,7 +49,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     });
 
     on<UserSignOut>((event, emit) async {
-      await FirebaseAuth.instance.signOut();
+      await service.signOutUser();
       emit(UserEmpty());
     });
   
