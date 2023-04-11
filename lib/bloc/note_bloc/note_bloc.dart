@@ -32,7 +32,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
         service.editNote(newNote);
       }
       emit(NoteTouched(newNote));
-    }, transformer: droppable());
+    }, transformer: sequential());
 
     on<NoteClose>((event, emit) async {
       if (state is NoteTouched) {
