@@ -27,7 +27,7 @@ class FirebaseService {
 
   // FIRESTORE
 
-  static const _notesDbKey = 'notes';
+  String get _notesDbKey => 'notes/${user.uid}/all';
 
   Future<Note> createNote(Map<String, dynamic> json) async {
     final docRef = await db.collection(_notesDbKey).add(json);
