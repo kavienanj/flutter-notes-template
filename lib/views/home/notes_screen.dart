@@ -12,12 +12,12 @@ class NotesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userBloc = context.read<UserBloc>();
-    final userEmail = (userBloc.state as UserSuccess).user.email;
+    final userEmail = (userBloc.state as UserSuccess).user.email!;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
         actions: [
-          Center(child: Text("Signed in as $userEmail")),
+          CircleAvatar(child: Text(userEmail[0].toUpperCase())),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
