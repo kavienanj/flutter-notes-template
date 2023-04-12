@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_notes_template/bloc/user_bloc/user_bloc.dart';
@@ -47,10 +48,11 @@ class NotesScreen extends StatelessWidget {
               );
             }
             final notes = snapshot.data!;
+            final columns = max(1, (MediaQuery.of(context).size.width / 350).round());
             return GridView.builder(
               itemCount: notes.length + 1,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: min(4, columns),
                 crossAxisSpacing: 15,
                 mainAxisSpacing: 15,
                 childAspectRatio: 1.5,
