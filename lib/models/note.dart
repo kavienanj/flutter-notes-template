@@ -8,6 +8,8 @@ class Note {
 
   bool get hasContent => title.isNotEmpty || description.isNotEmpty;
 
+  static const empty = Note("empty", "empty", "empty", 0);
+
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
       json['id'],
