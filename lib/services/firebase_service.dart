@@ -49,9 +49,9 @@ class FirebaseService {
     return (notesOrderDoc.data()?["notes_order"] as List?)?.cast<String>();
   }
 
-  Future<void> setNotesOrder(List<Note> notesOrder) async {
+  Future<void> setNotesOrder(List<String> noteIdsOrder) async {
     await db.doc(_userNotesKey).set({
-      'notes_order': [for (var note in notesOrder) note.id],
+      'notes_order': noteIdsOrder,
     });
   }
 

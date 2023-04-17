@@ -41,7 +41,7 @@ class NotesScreen extends StatelessWidget {
         child: FutureBuilder(
           future: service.getNotesOrderFuture(),
           builder: (context, snapshot) {
-            final notesOrder = snapshot.data;
+            var notesOrder = snapshot.data ?? <String>[];
             return StreamBuilder(
               stream: service.getNotesStream(),
               builder: (context, snapshot) {
@@ -55,11 +55,9 @@ class NotesScreen extends StatelessWidget {
                   );
                 }
                 final notes = [...snapshot.data!];
-                if (notesOrder != null) {
-                  notes.sort(
-                    (n1, n2) => notesOrder.indexOf(n1.id).compareTo(notesOrder.indexOf(n2.id)),
-                  );
-                }
+                notes.sort((n1, n2) => notesOrder.indexOf(n1.id)
+                  .compareTo(notesOrder.indexOf(n2.id)),
+                );
                 notes.insert(0, Note.empty);
                 final columns = max(1, (MediaQuery.of(context).size.width / 350).round());
                 return StatefulBuilder(
@@ -75,7 +73,8 @@ class NotesScreen extends StatelessWidget {
                       setState(() {
                         final item = notes.removeAt(oldIndex);
                         notes.insert(newIndex, item);
-                        service.setNotesOrder(notes.sublist(1));
+                        notesOrder = [for (var note in notes.sublist(1)) note.id];
+                        service.setNotesOrder(notesOrder);
                       });
                     },
                     children: [ for (var note in notes)
