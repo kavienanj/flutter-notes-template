@@ -27,30 +27,39 @@ class FirebaseService {
 
   // FIRESTORE
 
-  String get _notesDbKey => 'notes/${user.uid}/all';
+  String get _userAllNotesKey => 'notes/${user.uid}/all';
+  String get _userNotesKey => 'notes/${user.uid}';
 
-  Future<Note> createNote(Map<String, dynamic> json) async {
-    final docRef = await db.collection(_notesDbKey).add(json);
-    return Note.fromJson(json..addEntries([
-      MapEntry('id', docRef.id),
-    ]));
+  Future<Note> createNote(String title, String description) async {
+    final json = {"title": title, "description": description};
+    final docRef = await db.collection(_userAllNotesKey).add(json);
+    return Note.fromJson({'id': docRef.id, ...json});
   }
 
   Future<void> editNote(Note note) async {
-    await db.collection(_notesDbKey).doc(note.id).set(note.toJson());
+    await db.collection(_userAllNotesKey).doc(note.id).set(note.toJson());
   }
 
   Future<void> deleteNote(Note note) async {
-    await db.collection(_notesDbKey).doc(note.id).delete();
+    await db.collection(_userAllNotesKey).doc(note.id).delete();
+  }
+
+  Future<List<String>?> getNotesOrderFuture() async {
+    final notesOrderDoc = await db.doc(_userNotesKey).get();
+    return (notesOrderDoc.data()?["notes_order"] as List?)?.cast<String>();
+  }
+
+  Future<void> setNotesOrder(List<Note> notesOrder) async {
+    await db.doc(_userNotesKey).set({
+      'notes_order': [for (var note in notesOrder) note.id],
+    });
   }
 
   Stream<List<Note>> getNotesStream() {
-    final notesSnaps = db.collection(_notesDbKey).snapshots();
+    final notesSnaps = db.collection(_userAllNotesKey).snapshots();
     return notesSnaps.map<List<Note>>(
       (snap) => snap.docs.map<Note>(
-        (doc) => Note.fromJson(doc.data()..addEntries([
-          MapEntry('id', doc.id),
-        ])),
+        (doc) => Note.fromJson({'id': doc.id, ...doc.data()}),
       ).toList(),
     );
   }

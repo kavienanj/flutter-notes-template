@@ -19,11 +19,10 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     on<NoteEdit>((event, emit) async {
       Note newNote;
       if (state is NoteEmpty) {
-        newNote = await service.createNote({
-          "title": event.title ?? "",
-          "description": event.description ?? "",
-          "index": 1,
-        });
+        newNote = await service.createNote(
+          event.title ?? "",
+          event.description ?? "",
+        );
       } else {
         newNote = (state as NoteTouched).note.copyWith(
           title: event.title,

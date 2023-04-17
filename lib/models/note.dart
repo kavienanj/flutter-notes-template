@@ -2,20 +2,18 @@ class Note {
   final String id;
   final String title;
   final String description;
-  final int index;
 
-  const Note(this.id, this.title, this.description, this.index);
+  const Note(this.id, this.title, this.description);
 
   bool get hasContent => title.isNotEmpty || description.isNotEmpty;
 
-  static const empty = Note("empty", "empty", "empty", 0);
+  static const empty = Note("empty", "empty", "empty");
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
       json['id'],
       json['title'],
       json['description'],
-      json['index'],
     );
   }
 
@@ -23,16 +21,14 @@ class Note {
     return {
       'title': title,
       'description': description,
-      'index': index,
     };
   }
 
-  Note copyWith({String? title, String? description, int? index}) {
+  Note copyWith({String? title, String? description}) {
     return Note(
       id,
       title ?? this.title,
       description ?? this.description,
-      index ?? this.index,
     );
   }
 }

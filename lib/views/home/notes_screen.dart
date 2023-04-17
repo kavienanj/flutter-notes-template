@@ -13,6 +13,7 @@ class NotesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final service = context.read<FirebaseService>();
     final userBloc = context.read<UserBloc>();
     final userEmail = (userBloc.state as UserSuccess).user.email!;
     return Scaffold(
@@ -37,42 +38,55 @@ class NotesScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(30, 25, 30, 0),
-        child: StreamBuilder(
-          stream: context.read<FirebaseService>().getNotesStream(),
+        child: FutureBuilder(
+          future: service.getNotesOrderFuture(),
           builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Center(
-                child: Text("Something went wrong try again!"),
-              );
-            } else if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            final notes = [Note.empty, ...snapshot.data!];
-            final columns = max(1, (MediaQuery.of(context).size.width / 350).round());
-            return StatefulBuilder(
-              builder: (context, setState) => ReorderableGridView(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: min(4, columns),
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  childAspectRatio: 1.5,
-                ),
-                onReorder: (oldIndex, newIndex) {
-                  if (oldIndex == 0 || newIndex == 0) return;
-                  setState(() {
-                      final item = notes.removeAt(oldIndex);
-                      notes.insert(newIndex, item);
-                  });
-                },
-                children: [ for (var note in notes)
-                  NoteCard(
-                    key: ValueKey(note.id),
-                    note: note == Note.empty ? null : note,
+            final notesOrder = snapshot.data;
+            return StreamBuilder(
+              stream: service.getNotesStream(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text("Something went wrong try again!"),
+                  );
+                } else if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                final notes = [...snapshot.data!];
+                if (notesOrder != null) {
+                  notes.sort(
+                    (n1, n2) => notesOrder.indexOf(n1.id).compareTo(notesOrder.indexOf(n2.id)),
+                  );
+                }
+                notes.insert(0, Note.empty);
+                final columns = max(1, (MediaQuery.of(context).size.width / 350).round());
+                return StatefulBuilder(
+                  builder: (context, setState) => ReorderableGridView(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: min(4, columns),
+                      crossAxisSpacing: 15,
+                      mainAxisSpacing: 15,
+                      childAspectRatio: 1.5,
+                    ),
+                    onReorder: (oldIndex, newIndex) {
+                      if (oldIndex == 0 || newIndex == 0) return;
+                      setState(() {
+                        final item = notes.removeAt(oldIndex);
+                        notes.insert(newIndex, item);
+                        service.setNotesOrder(notes.sublist(1));
+                      });
+                    },
+                    children: [ for (var note in notes)
+                      NoteCard(
+                        key: ValueKey(note.id),
+                        note: note == Note.empty ? null : note,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             );
           },
         ),
