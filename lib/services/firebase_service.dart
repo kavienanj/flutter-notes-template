@@ -95,7 +95,7 @@ class FirebaseService {
     );
   }
 
-  Stream<List<TeamMember>> getTeamsStream() {
+  Stream<List<TeamMember>> getUserTeamsStream() {
     final teamsSnaps = db.collection(_userTeamsKey).snapshots();
     return teamsSnaps.map<List<TeamMember>>(
       (snap) => snap.docs.map<TeamMember>(
@@ -125,8 +125,8 @@ class FirebaseService {
     await db.collection(_teamsAllKey).doc(team.id).set(team.toJson());
   }
 
-  Stream<Team> getTeamStream(Team team) {
-    final teamDoc = db.collection(_teamsAllKey).doc(team.id).snapshots();
+  Stream<Team> getTeamStream(String teamId) {
+    final teamDoc = db.collection(_teamsAllKey).doc(teamId).snapshots();
     return teamDoc.map<Team>(
       (doc) => Team.fromJson({'id': doc.id, ...doc.data()!})
     );

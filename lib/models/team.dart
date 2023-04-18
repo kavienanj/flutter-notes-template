@@ -9,7 +9,7 @@ class Team {
     return Team(
       json['id'],
       json['name'],
-      json['members'],
+      (json['members'] as List).cast<String>(),
     );
   }
 

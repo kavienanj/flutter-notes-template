@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_notes_template/bloc/note_bloc/note_bloc.dart';
 import 'package:flutter_notes_template/models/note.dart';
+import 'package:flutter_notes_template/models/team.dart';
 import 'package:flutter_notes_template/services/firebase_service.dart';
 import 'package:flutter_notes_template/views/widgets/notes/note_edit_dialog.dart';
 
 class NoteCard extends StatelessWidget {
-  const NoteCard({super.key, this.note});
+  const NoteCard({super.key, this.note, this.team});
   final Note? note;
+  final Team? team;
 
   void _showNoteDialog(BuildContext context) async => await showDialog(
     context: context,
@@ -15,6 +17,7 @@ class NoteCard extends StatelessWidget {
       create: (context) => NoteBloc(
         service: context.read<FirebaseService>(),
         note: note,
+        team: team,
       ),
       child: const NoteEditDialog(),
     ),
