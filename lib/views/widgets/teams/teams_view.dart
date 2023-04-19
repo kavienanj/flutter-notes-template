@@ -4,6 +4,7 @@ import 'package:flutter_notes_template/models/team.dart';
 import 'package:flutter_notes_template/models/team_member.dart';
 import 'package:flutter_notes_template/services/firebase_service.dart';
 import 'package:flutter_notes_template/views/widgets/notes/team_notes_view.dart';
+import 'package:flutter_notes_template/views/widgets/teams/team_settings_dialog.dart';
 
 class TeamsView extends StatelessWidget {
   const TeamsView({super.key});
@@ -12,7 +13,7 @@ class TeamsView extends StatelessWidget {
     ? const Center(child: Text("Something went wrong try again!"))
     : const Center(child: CircularProgressIndicator());
 
-  Widget _teamActionsThread(Team team, TeamMember teamMember) {
+  Widget _teamActionsThread(BuildContext context, Team team, TeamMember teamMember) {
     return IconTheme(
       data: const IconThemeData(size: 32),
       child: Padding(
@@ -43,7 +44,10 @@ class TeamsView extends StatelessWidget {
             const SizedBox(width: 10),
             teamMember.isAdmin
               ? IconButton(
-                  onPressed: () {},
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => TeamSettingsDialog(teamId: team.id),
+                  ),
                   tooltip: "Team Settings",
                   icon: const Icon(Icons.settings),
                 )
@@ -76,7 +80,7 @@ class TeamsView extends StatelessWidget {
                 final team = snapshot.data!;
                 return Column(
                   children: [
-                    _teamActionsThread(team, teamMember),
+                    _teamActionsThread(context, team, teamMember),
                     TeamNotesGridView(team: team),
                   ],
                 );
