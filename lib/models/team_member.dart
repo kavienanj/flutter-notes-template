@@ -1,10 +1,10 @@
 class TeamMember {
   final String teamId;
-  final String userId;
+  final String userEmail;
   final bool isAdmin;
   final bool hasEditPermission;
 
-  TeamMember(this.teamId, this.userId, this.isAdmin, this.hasEditPermission);
+  TeamMember(this.teamId, this.userEmail, this.isAdmin, this.hasEditPermission);
 
   factory TeamMember.fromJson(Map<String, dynamic> json) {
     return TeamMember(

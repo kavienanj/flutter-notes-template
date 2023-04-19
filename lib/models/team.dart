@@ -1,14 +1,16 @@
 class Team {
   final String id;
   final String name;
-  final List<String> membersIds;
+  final String owner;
+  final List<String> members;
 
-  Team(this.id, this.name, this.membersIds);
+  Team(this.id, this.name, this.owner, this.members);
 
   factory Team.fromJson(Map<String, dynamic> json) {
     return Team(
       json['id'],
       json['name'],
+      json['owner'],
       (json['members'] as List).cast<String>(),
     );
   }
@@ -16,7 +18,8 @@ class Team {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'members': membersIds,
+      'owner': owner,
+      'members': members,
     };
   }
 }

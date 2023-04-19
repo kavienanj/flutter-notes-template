@@ -29,9 +29,10 @@ class FirebaseService {
 
   // FIRESTORE
 
-  String get _userNotesKey => 'notes/${user.uid}';
-  String get _userAllNotesKey => 'notes/${user.uid}/all';
-  String get _userTeamsKey => 'notes/${user.uid}/teams';
+  String get _userNotesKey => 'notes/${user.email}';
+  String get _userAllNotesKey => 'notes/${user.email}/all';
+  String get _userTeamsKey => 'notes/${user.email}/teams';
+  String _memberTeamsKey(String memberEmail) => 'notes/$memberEmail/teams';
   String get _teamsAllKey => 'teams';
   String _teamNotesKey(Team team) => 'notes/${team.id}';
   String _teamAllNotesKey(Team team) => 'notes/${team.id}/all';
@@ -100,9 +101,18 @@ class FirebaseService {
     return teamsSnaps.map<List<TeamMember>>(
       (snap) => snap.docs.map<TeamMember>(
         (doc) => TeamMember.fromJson(
-          {'id': doc.id, 'user': user.uid, ...doc.data()},
+          {'id': doc.id, 'user': user.email, ...doc.data()},
         ),
       ).toList(),
+    );
+  }
+
+  Stream<TeamMember> getTeamMemberStream(String userEmail, String teamId)  {
+    final memberDoc = db.collection(_memberTeamsKey(userEmail)).doc(teamId).snapshots();
+    return memberDoc.map<TeamMember>(
+      (doc) => TeamMember.fromJson(
+        {'id': doc.id, 'user': userEmail, ...doc.data()!},
+      )
     );
   }
 
@@ -116,7 +126,7 @@ class FirebaseService {
   }
 
   Future<Team> createTeam(String teamName) async {
-    final json = {"name": teamName, "members": [ user.uid ]};
+    final json = {"name": teamName, "members": <String>[], "owner": user.email};
     final docRef = await db.collection(_teamsAllKey).add(json);
     return Team.fromJson({'id': docRef.id, ...json});
   }
