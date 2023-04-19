@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_notes_template/bloc/user_bloc/user_bloc.dart';
-import 'package:flutter_notes_template/models/team.dart';
 import 'package:flutter_notes_template/services/firebase_service.dart';
+
+class FixedValueDropdown extends StatelessWidget {
+  const FixedValueDropdown({super.key, required this.value,});
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton(
+      value: value,
+      items: [DropdownMenuItem(
+        value: value,
+        child: Text(value),
+      )],
+      onChanged: null,
+    );
+  }
+}
 
 class TeamMemberPermissionsEditField extends StatelessWidget {
   const TeamMemberPermissionsEditField({
     super.key,
     required this.userEmail,
-    required this.team,
+    required this.teamId,
+    required this.editAdmins,
   });
   final String userEmail;
-  final Team team;
+  final String teamId;
+  final bool editAdmins;
 
   Widget _loadingOrErrorView(AsyncSnapshot snapshot) => snapshot.hasError
     ? const Center(child: Text("Something went wrong try again!"))
@@ -20,10 +38,8 @@ class TeamMemberPermissionsEditField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = context.read<FirebaseService>();
-    final userBloc = context.read<UserBloc>();
-    final userIsOwner = team.owner == (userBloc.state as UserSuccess).user.email!;
     return StreamBuilder(
-      stream: service.getTeamMemberStream(userEmail, team.id),
+      stream: service.getTeamMemberStream(userEmail, teamId),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return _loadingOrErrorView(snapshot);
         final teamMember = snapshot.data!;
@@ -31,19 +47,22 @@ class TeamMemberPermissionsEditField extends StatelessWidget {
           children: [
             Text(teamMember.userEmail),
             const SizedBox(width: 16),
-            DropdownButton(
-              value: teamMember.hasEditPermission
-                ? teamMember.isAdmin ? 'Admin' : 'Edit'
-                : 'View Only',
-              items: ["View Only", "Edit", if (userIsOwner) "Admin"].map(
-                (e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e),
-                ),
-              ).toList(),
-              onChanged: (value) {},
-            ),
-            IconButton(
+            if (!editAdmins && teamMember.isAdmin)
+              const FixedValueDropdown(value: 'Admin')
+            else
+              DropdownButton(
+                value: teamMember.hasEditPermission
+                  ? teamMember.isAdmin ? 'Admin' : 'Edit'
+                  : 'View Only',
+                items: ["View Only", "Edit", if (editAdmins) "Admin"].map(
+                  (e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(e),
+                  ),
+                ).toList(),
+                onChanged: (value) {},
+              ),
+            if (editAdmins || !teamMember.isAdmin) IconButton(
               splashRadius: 12,
               onPressed: () {},
               color: Colors.red,
@@ -90,22 +109,27 @@ class TeamSettingsDialog extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
+                const Text("Team Name:"),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextField(
+                    controller: TextEditingController(text: team.name),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
                 Text(team.owner),
                 const SizedBox(width: 16),
-                DropdownButton(
-                  value: "Owner",
-                  items: const [DropdownMenuItem(
-                    value: "Owner",
-                    child: Text("Owner"),
-                  )],
-                  onChanged: null,
-                ),
+                const FixedValueDropdown(value: 'Owner'),
               ],
             ),
             for (final member in team.members) 
               TeamMemberPermissionsEditField(
                 userEmail: member,
-                team: team,
+                teamId: team.id,
+                editAdmins: team.owner == userEmail,
               ),
             TextButton.icon(
               onPressed: () {},

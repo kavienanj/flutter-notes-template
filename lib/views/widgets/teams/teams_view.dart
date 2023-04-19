@@ -34,7 +34,9 @@ class TeamsView extends StatelessWidget {
             IconButton(
               onPressed: () {},
               tooltip: teamMember.hasEditPermission
-                ? teamMember.isAdmin ? "Team Admin" : "View & Edit"
+                ? teamMember.isOwner 
+                  ? "Team Owner"
+                  : teamMember.isAdmin ? "Team Admin" : "View & Edit"
                 : "View only",
               icon: Icon(teamMember.hasEditPermission
                 ? teamMember.isAdmin ? Icons.person : Icons.edit
