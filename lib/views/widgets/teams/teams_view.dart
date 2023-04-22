@@ -84,6 +84,7 @@ class TeamsView extends StatelessWidget {
                   children: [
                     _teamActionsThread(context, team, teamMember),
                     TeamNotesGridView(team: team),
+                    const SizedBox(height: 40),
                   ],
                 );
               },

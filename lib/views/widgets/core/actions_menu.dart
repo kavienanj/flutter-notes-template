@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_notes_template/bloc/user_bloc/user_bloc.dart';
 import 'package:flutter_notes_template/views/auth/signin_screen.dart';
+import 'package:flutter_notes_template/views/widgets/teams/team_create_dialog.dart';
 
 class ActionsPopupMenu extends StatelessWidget {
   const ActionsPopupMenu({super.key});
@@ -41,7 +42,12 @@ class ActionsPopupMenu extends StatelessWidget {
         ),
       ],
       onSelected: (i) {
-        if (i == 1) {
+        if (i == 0) {
+          showDialog(
+            context: context,
+            builder: (context) => const TeamCreateDialog(),
+          );
+        } else if (i == 1) {
           context.read<UserBloc>().add(UserSignOut());
           Navigator.pushReplacement(
             context,

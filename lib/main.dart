@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_notes_template/bloc/team_bloc/team_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:flutter_notes_template/bloc/user_bloc/user_bloc.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<FirebaseService>.value(value: service),
         BlocProvider(create: (context) => UserBloc(service)),
+        BlocProvider(create: (context) => TeamBloc(service)),
       ],
       child: ReactiveFormConfig(
         validationMessages: GlobalFormConfig.validationMessages,
