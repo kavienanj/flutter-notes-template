@@ -96,16 +96,16 @@ class FirebaseService {
     );
   }
 
-  Stream<List<TeamMember>> getUserTeamsStream() {
-    final teamsSnaps = db.collection(_userTeamsKey).snapshots();
-    return teamsSnaps.map<List<TeamMember>>(
-      (snap) => snap.docs.map<TeamMember>(
-        (doc) => TeamMember.fromJson(
-          {'id': doc.id, 'user': user.email, ...doc.data()},
-        ),
+  Stream<List<Note>> getTeamNotesStream(Team team) {
+    final notesSnaps = db.collection(_teamAllNotesKey(team)).snapshots();
+    return notesSnaps.map<List<Note>>(
+      (snap) => snap.docs.map<Note>(
+        (doc) => Note.fromJson({'id': doc.id, ...doc.data()}),
       ).toList(),
     );
   }
+
+  // Team & TeamMember
 
   Stream<TeamMember> getTeamMemberStream(String userEmail, String teamId)  {
     final memberDoc = db.collection(_memberTeamsKey(userEmail)).doc(teamId).snapshots();
@@ -116,11 +116,27 @@ class FirebaseService {
     );
   }
 
-  Stream<List<Note>> getTeamNotesStream(Team team) {
-    final notesSnaps = db.collection(_teamAllNotesKey(team)).snapshots();
-    return notesSnaps.map<List<Note>>(
-      (snap) => snap.docs.map<Note>(
-        (doc) => Note.fromJson({'id': doc.id, ...doc.data()}),
+  Future<TeamMember> editOrCreateTeamMember(String userEmail, String teamId, TeamMemberRole role) async {
+    final json = {
+      'is_admin': role == TeamMemberRole.admin || role == TeamMemberRole.owner,
+      'is_owner': role == TeamMemberRole.owner,
+      'can_edit': role != TeamMemberRole.viewer,
+    };
+    await db.collection(_memberTeamsKey(userEmail)).doc(teamId).set(json);
+    return TeamMember.fromJson({'id': teamId, 'user': userEmail, ...json});
+  }
+
+  Future<void> deleteTeamMember(TeamMember teamMember) async {
+    await db.collection(_memberTeamsKey(teamMember.userEmail)).doc(teamMember.teamId).delete();
+  }
+
+  Stream<List<TeamMember>> getUserTeamsStream() {
+    final teamsSnaps = db.collection(_userTeamsKey).snapshots();
+    return teamsSnaps.map<List<TeamMember>>(
+      (snap) => snap.docs.map<TeamMember>(
+        (doc) => TeamMember.fromJson(
+          {'id': doc.id, 'user': user.email, ...doc.data()},
+        ),
       ).toList(),
     );
   }
@@ -140,5 +156,9 @@ class FirebaseService {
     return teamDoc.map<Team>(
       (doc) => Team.fromJson({'id': doc.id, ...doc.data()!})
     );
+  }
+
+  Future<void> deleteTeam(Team team) async {
+    await db.collection(_teamsAllKey).doc(team.id).delete();
   }
 }

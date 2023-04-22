@@ -1,3 +1,10 @@
+enum TeamMemberRole {
+  owner,
+  admin,
+  editor,
+  viewer
+}
+
 class TeamMember {
   final String teamId;
   final String userEmail;
@@ -23,7 +30,7 @@ class TeamMember {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, bool> toJson() {
     return {
       'is_admin': isAdmin,
       'is_owner': isOwner,
