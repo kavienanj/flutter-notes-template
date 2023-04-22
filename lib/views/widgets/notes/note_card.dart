@@ -5,13 +5,15 @@ import 'package:flutter_notes_template/models/note.dart';
 import 'package:flutter_notes_template/models/team.dart';
 import 'package:flutter_notes_template/services/firebase_service.dart';
 import 'package:flutter_notes_template/views/widgets/notes/note_edit_dialog.dart';
+import 'package:flutter_notes_template/views/widgets/notes/note_view_dialog.dart';
 
 class NoteCard extends StatelessWidget {
-  const NoteCard({super.key, this.note, this.team});
+  const NoteCard({super.key, this.note, this.team, this.disableEdit = false});
   final Note? note;
   final Team? team;
+  final bool disableEdit;
 
-  void _showNoteDialog(BuildContext context) async => await showDialog(
+  void _showEditNoteDialog(BuildContext context) async => await showDialog(
     context: context,
     builder: (context) => BlocProvider(
       create: (context) => NoteBloc(
@@ -21,6 +23,11 @@ class NoteCard extends StatelessWidget {
       ),
       child: const NoteEditDialog(),
     ),
+  );
+
+  void _showStaticNoteDialog(BuildContext context) async => await showDialog(
+    context: context,
+    builder: (context) => NoteViewDialog(note: note!),
   );
 
   @override
@@ -34,7 +41,9 @@ class NoteCard extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
         minLeadingWidth: 0,
         minVerticalPadding: 0,
-        onTap: () => _showNoteDialog(context),
+        onTap: disableEdit
+          ? () => _showStaticNoteDialog(context)
+          : () => _showEditNoteDialog(context),
         tileColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
