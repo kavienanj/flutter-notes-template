@@ -22,4 +22,17 @@ class Team {
       'members': members,
     };
   }
+
+  Team copyWith({
+    String? name,
+    String? owner,
+    List<String>? members,
+  }) {
+    return Team(
+      id,
+      name ?? this.name,
+      owner ?? this.owner,
+      members ?? this.members,
+    );
+  }
 }
