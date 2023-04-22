@@ -32,7 +32,11 @@ class TeamMemberAdd extends TeamEvent {
 
 class TeamMemberRemove extends TeamEvent {
   final TeamMember teamMember;
-  TeamMemberRemove(this.teamMember);
+  final Team team;
+  TeamMemberRemove({
+    required this.team,
+    required this.teamMember,
+  });
 }
 
 class TeamMemberRoleChange extends TeamEvent {

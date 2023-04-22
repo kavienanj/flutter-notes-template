@@ -26,6 +26,9 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
 
     on<TeamDelete>((event, emit) async {
       emit(TeamLoading());
+      for (final memberEmail in [event.team.owner, ...event.team.members]) {
+        service.deleteTeamMember(memberEmail, event.team.id);
+      }
       await service.deleteTeam(event.team);
       emit(TeamDeleted());
     });
@@ -35,6 +38,11 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         return;
       }
       emit(TeamLoading());
+      await service.editTeam(
+        event.team.copyWith(
+          members: [...event.team.members, event.userEmail],
+        ),
+      );
       await service.editOrCreateTeamMember(
         event.userEmail,
         event.team.id,
@@ -45,7 +53,14 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
 
     on<TeamMemberRemove>((event, emit) async {
       emit(TeamLoading());
-      await service.deleteTeamMember(event.teamMember);
+      await service.editTeam(
+        event.team.copyWith(
+          members: event.team.members.where(
+            (member) => member != event.teamMember.userEmail
+          ).toList(),
+        ),
+      );
+      await service.deleteTeamMember(event.teamMember.userEmail, event.teamMember.teamId);
       emit(TeamMemberRemoved());
     });
 

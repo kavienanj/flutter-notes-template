@@ -126,8 +126,8 @@ class FirebaseService {
     return TeamMember.fromJson({'id': teamId, 'user': userEmail, ...json});
   }
 
-  Future<void> deleteTeamMember(TeamMember teamMember) async {
-    await db.collection(_memberTeamsKey(teamMember.userEmail)).doc(teamMember.teamId).delete();
+  Future<void> deleteTeamMember(String userEmail, String teamId) async {
+    await db.collection(_memberTeamsKey(userEmail)).doc(teamId).delete();
   }
 
   Stream<List<TeamMember>> getUserTeamsStream() {
