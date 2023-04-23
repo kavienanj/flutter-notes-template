@@ -9,7 +9,7 @@ class SignUpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Sign Up"),
+        title: const Text('Sign Up'),
         centerTitle: true,
       ),
       body: Column(
@@ -20,7 +20,7 @@ class SignUpScreen extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const SignInScreen()),
             ),
-            child: const Text("Already have an account, Sign In"),
+            child: const Text('Already have an account, Sign In'),
           ),
         ],
       ),

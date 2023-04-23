@@ -30,7 +30,7 @@ class TeamNotesGridView extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Center(
-                child: Text("Something went wrong try again!"),
+                child: Text('Something went wrong try again!'),
               );
             } else if (!snapshot.hasData) {
               return const Center(

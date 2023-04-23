@@ -21,8 +21,8 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       Note newNote;
       if (state is NoteEmpty) {
         newNote = await _createNote(
-          event.title ?? "",
-          event.description ?? "",
+          event.title ?? '',
+          event.description ?? '',
         );
       } else {
         newNote = (state as NoteTouched).note.copyWith(

@@ -13,15 +13,15 @@ class TeamMemberError extends TeamState {
 }
 
 class InvalidTeamMember extends TeamMemberError {
-  InvalidTeamMember() : super("Invalid user email");
+  InvalidTeamMember() : super('Invalid user email');
 }
 
 class TeamMemberExists extends TeamMemberError {
-  TeamMemberExists() : super("Member already exists in team");
+  TeamMemberExists() : super('Member already exists in team');
 }
 
 class TeamMemberDoesNotExist extends TeamMemberError {
-  TeamMemberDoesNotExist() : super("User does not exist");
+  TeamMemberDoesNotExist() : super('User does not exist');
 }
 
 class TeamCreated extends TeamState {}

@@ -21,7 +21,7 @@ class ActionsPopupMenu extends StatelessWidget {
               Icon(Icons.add, color: Colors.black),
               SizedBox(width: 10),
               Text(
-                "Create New Team",
+                'Create New Team',
                 style: TextStyle(color: Colors.black),
               ),
             ],
@@ -34,7 +34,7 @@ class ActionsPopupMenu extends StatelessWidget {
               Icon(Icons.logout, color: Colors.black),
               SizedBox(width: 10),
               Text(
-                "Sign Out",
+                'Sign Out',
                 style: TextStyle(color: Colors.black),
               ),
             ],

@@ -15,8 +15,8 @@ class SignInForm extends StatefulWidget {
 
 class _SignInFormState extends State<SignInForm> {
 
-  final _emailInputLabel = "Email";
-  final _passwordInputLabel = "Password";
+  final _emailInputLabel = 'Email';
+  final _passwordInputLabel = 'Password';
   late FormGroup _form;
 
   @override

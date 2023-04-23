@@ -51,7 +51,7 @@ class NoteCard extends StatelessWidget {
         title: Padding(
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
           child: Text(
-            hasTitle ? note!.title : "New Note",
+            hasTitle ? note!.title : 'New Note',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,

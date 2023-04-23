@@ -11,7 +11,7 @@ class TeamSettingsDialog extends StatelessWidget {
   final TeamMember teamMember;
 
   Widget _loadingOrErrorView(AsyncSnapshot snapshot) => snapshot.hasError
-    ? const Center(child: Text("Something went wrong try again!"))
+    ? const Center(child: Text('Something went wrong try again!'))
     : const Center(child: CircularProgressIndicator());
 
   @override
@@ -42,7 +42,7 @@ class TeamSettingsDialog extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Text("Team Name:"),
+                const Text('Team Name:'),
                 const SizedBox(width: 16),
                 Expanded(
                   child: TextField(
@@ -52,7 +52,7 @@ class TeamSettingsDialog extends StatelessWidget {
                         team: team,
                         name: newName.isNotEmpty
                           ? newName
-                          : "Team"
+                          : 'Team'
                       ),
                     ),
                   ),

@@ -10,7 +10,7 @@ class NotesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text('Home'),
         actions: const [
           ActionsPopupMenu(),
           SizedBox(width: 30),

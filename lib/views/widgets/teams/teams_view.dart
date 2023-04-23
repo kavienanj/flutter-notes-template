@@ -11,7 +11,7 @@ class TeamsView extends StatelessWidget {
   const TeamsView({super.key});
 
   Widget _loadingOrErrorView(AsyncSnapshot snapshot) => snapshot.hasError
-    ? const Center(child: Text("Something went wrong try again!"))
+    ? const Center(child: Text('Something went wrong try again!'))
     : const Center(child: CircularProgressIndicator());
 
   Widget _teamActionsThread(BuildContext context, Team team, TeamMember teamMember) {
@@ -36,9 +36,9 @@ class TeamsView extends StatelessWidget {
               onPressed: () {},
               tooltip: teamMember.hasEditPermission
                 ? teamMember.isOwner 
-                  ? "Team Owner"
-                  : teamMember.isAdmin ? "Team Admin" : "View & Edit"
-                : "View only",
+                  ? 'Team Owner'
+                  : teamMember.isAdmin ? 'Team Admin' : 'View & Edit'
+                : 'View only',
               icon: Icon(teamMember.hasEditPermission
                 ? teamMember.isAdmin ? Icons.person : Icons.edit
                 : Icons.visibility,
@@ -51,7 +51,7 @@ class TeamsView extends StatelessWidget {
                     context: context,
                     builder: (context) => TeamSettingsDialog(teamMember: teamMember),
                   ),
-                  tooltip: "Team Settings",
+                  tooltip: 'Team Settings',
                   icon: const Icon(Icons.settings),
                 )
               : IconButton(
@@ -61,7 +61,7 @@ class TeamsView extends StatelessWidget {
                       teamMember: teamMember,
                     ));
                   },
-                  tooltip: "Leave Team",
+                  tooltip: 'Leave Team',
                   icon: const Icon(Icons.exit_to_app),
                 ),
           ],

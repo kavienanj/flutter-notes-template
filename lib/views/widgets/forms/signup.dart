@@ -15,9 +15,9 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
 
-  final _emailInputLabel = "Email";
-  final _passwordInputLabel = "Password";
-  final _passwordConfirmInputLabel = "Confirm Password";
+  final _emailInputLabel = 'Email';
+  final _passwordInputLabel = 'Password';
+  final _passwordConfirmInputLabel = 'Confirm Password';
   late FormGroup _form;
 
   @override
@@ -61,7 +61,7 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
             CustomReactivePasswordField(
               formControlName: _passwordInputLabel,
-              helperText: "8 or more characters",
+              helperText: '8 or more characters',
             ),
             CustomReactivePasswordField(
               formControlName: _passwordConfirmInputLabel,

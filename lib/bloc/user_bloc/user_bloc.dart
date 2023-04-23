@@ -20,13 +20,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           service.setNewUserRecord(event.email);
           add(UserSignIn(event.email, event.password));
         } else {
-          emit(UserError(errorMessage: "Something went wrong, Try again!"));
+          emit(UserError(errorMessage: 'Something went wrong, Try again!'));
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
-          emit(UserError(errorMessage: "The password provided is too weak"));
+          emit(UserError(errorMessage: 'The password provided is too weak'));
         } else if (e.code == 'email-already-in-use') {
-          emit(UserError(errorMessage: "The account already exists for that email"));
+          emit(UserError(errorMessage: 'The account already exists for that email'));
         }
       }
     });
@@ -38,13 +38,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(
           userCredential.user != null
             ? UserSuccess(service.user)
-            : UserError(errorMessage: "Something went wrong, Try again!")
+            : UserError(errorMessage: 'Something went wrong, Try again!')
         );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
-          emit(UserError(errorMessage: "No user found for that email."));
+          emit(UserError(errorMessage: 'No user found for that email.'));
         } else if (e.code == 'wrong-password') {
-          emit(UserError(errorMessage: "Wrong password provided."));
+          emit(UserError(errorMessage: 'Wrong password provided.'));
         }
       }
     });

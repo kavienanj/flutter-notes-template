@@ -45,13 +45,13 @@ class FirebaseService {
   String _teamAllNotesKey(Team team) => 'notes/${team.id}/all';
 
   Future<Note> createNote(String title, String description) async {
-    final json = {"title": title, "description": description};
+    final json = {'title': title, 'description': description};
     final docRef = await db.collection(_userAllNotesKey).add(json);
     return Note.fromJson({'id': docRef.id, ...json});
   }
 
   Future<Note> createTeamNote(Team team, String title, String description) async {
-    final json = {"title": title, "description": description};
+    final json = {'title': title, 'description': description};
     final docRef = await db.collection(_teamAllNotesKey(team)).add(json);
     return Note.fromJson({'id': docRef.id, ...json});
   }
@@ -78,12 +78,12 @@ class FirebaseService {
 
   Future<List<String>?> getNotesOrderFuture() async {
     final notesOrderDoc = await db.doc(_userNotesKey).get();
-    return (notesOrderDoc.data()?["notes_order"] as List?)?.cast<String>();
+    return (notesOrderDoc.data()?['notes_order'] as List?)?.cast<String>();
   }
 
   Future<List<String>?> getTeamNotesOrderFuture(Team team) async {
     final notesOrderDoc = await db.doc(_teamNotesKey(team)).get();
-    return (notesOrderDoc.data()?["notes_order"] as List?)?.cast<String>();
+    return (notesOrderDoc.data()?['notes_order'] as List?)?.cast<String>();
   }
 
   Future<void> setNotesOrder(List<String> noteIdsOrder) async {
@@ -158,7 +158,7 @@ class FirebaseService {
   }
 
   Future<Team> createTeam(String teamName) async {
-    final json = {"name": teamName, "members": <String>[], "owner": user.email};
+    final json = {'name': teamName, 'members': <String>[], 'owner': user.email};
     final docRef = await db.collection(_teamsAllKey).add(json);
     return Team.fromJson({'id': docRef.id, ...json});
   }

@@ -7,7 +7,7 @@ class Note {
 
   bool get hasContent => title.isNotEmpty || description.isNotEmpty;
 
-  static const empty = Note("empty", "empty", "empty");
+  static const empty = Note('empty', 'empty', 'empty');
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(

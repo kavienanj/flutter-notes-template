@@ -33,7 +33,7 @@ class NoteEditDialog extends StatelessWidget {
                     child: NoteTextField(
                       text: note?.title,
                       fontSize: 24.0,
-                      hintText: "Title",
+                      hintText: 'Title',
                       fontWeight: FontWeight.bold,
                       onChanged: (title) => bloc.add(NoteEdit(title: title)),
                     ),
