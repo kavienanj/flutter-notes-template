@@ -45,13 +45,25 @@ class FirebaseService {
   String _teamAllNotesKey(Team team) => 'notes/${team.id}/all';
 
   Future<Note> createNote(String title, String description) async {
-    final json = {'title': title, 'description': description};
+    final json = {
+      'title': title,
+      'description': description,
+      'created_by': user.email,
+      'created_at': Timestamp.fromDate(DateTime.now()),
+      'edit_history': {},
+    };
     final docRef = await db.collection(_userAllNotesKey).add(json);
     return Note.fromJson({'id': docRef.id, ...json});
   }
 
   Future<Note> createTeamNote(Team team, String title, String description) async {
-    final json = {'title': title, 'description': description};
+    final json = {
+      'title': title,
+      'description': description,
+      'created_by': user.email,
+      'created_at': Timestamp.fromDate(DateTime.now()),
+      'edit_history': {},
+    };
     final docRef = await db.collection(_teamAllNotesKey(team)).add(json);
     return Note.fromJson({'id': docRef.id, ...json});
   }

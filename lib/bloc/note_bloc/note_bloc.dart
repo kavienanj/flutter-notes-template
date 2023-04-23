@@ -25,9 +25,11 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
           event.description ?? '',
         );
       } else {
-        newNote = (state as NoteTouched).note.copyWith(
+        final oldNote = (state as NoteTouched).note;
+        newNote = oldNote.copyWith(
           title: event.title,
           description: event.description,
+          editHistory: { service.user.email! : DateTime.now(),  ...oldNote.editHistory },
         );
         _editNote(newNote);
       }
