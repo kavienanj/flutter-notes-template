@@ -34,21 +34,27 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
     });
 
     on<TeamMemberAdd>((event, emit) async {
-      if ([event.team.owner, ...event.team.members].contains(event.userEmail)) {
-        return;
+      final emailRegex = RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+      if (event.userEmail.isEmpty || !emailRegex.hasMatch(event.userEmail)) {
+        emit(InvalidTeamMember());
+      } else if ([event.team.owner, ...event.team.members].contains(event.userEmail)) {
+        emit(TeamMemberExists());
+      } else if (!(await service.userEmailExists(event.userEmail))) {
+        emit(TeamMemberDoesNotExist());
+      } else {
+        emit(TeamLoading());
+        await service.editTeam(
+          event.team.copyWith(
+            members: [...event.team.members, event.userEmail],
+          ),
+        );
+        await service.editOrCreateTeamMember(
+          event.userEmail,
+          event.team.id,
+          event.role,
+        );
+        emit(TeamMemberAdded());
       }
-      emit(TeamLoading());
-      await service.editTeam(
-        event.team.copyWith(
-          members: [...event.team.members, event.userEmail],
-        ),
-      );
-      await service.editOrCreateTeamMember(
-        event.userEmail,
-        event.team.id,
-        event.role,
-      );
-      emit(TeamMemberAdded());
     });
 
     on<TeamMemberRemove>((event, emit) async {

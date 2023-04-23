@@ -81,32 +81,39 @@ class TeamSettingsDialog extends StatelessWidget {
               if (memberEmail != teamMember.userEmail)
                 TeamMemberPermissionsEditField(
                   userEmail: memberEmail,
-                  teamId: team.id,
+                  team: team,
                   editAdmins: team.owner == teamMember.userEmail,
                 ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: newMemberEmailController,
-                    decoration: const InputDecoration(
-                      hintText: 'Email address',
+            BlocBuilder<TeamBloc, TeamState>(
+              buildWhen: (previous, current) => 
+                current is TeamMemberError || current is TeamMemberAdded,
+              builder: (context, state) => Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: newMemberEmailController,
+                      decoration: InputDecoration(
+                        hintText: 'Email address',
+                        errorText: state is TeamMemberError
+                          ? state.errorMessage
+                          : null,
+                      ),
                     ),
                   ),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    teamBloc.add(TeamMemberAdd(
-                      userEmail: newMemberEmailController.text,
-                      team: team,
-                      role: TeamMemberRole.editor,
-                    ));
-                    newMemberEmailController.clear();
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Member'),
-                ),
-              ],
+                  TextButton.icon(
+                    onPressed: () {
+                      teamBloc.add(TeamMemberAdd(
+                        userEmail: newMemberEmailController.text,
+                        team: team,
+                        role: TeamMemberRole.editor,
+                      ));
+                      newMemberEmailController.clear();
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add Member'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             teamMember.isOwner

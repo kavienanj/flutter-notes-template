@@ -7,9 +7,21 @@ class TeamInitial extends TeamState {}
 
 class TeamLoading extends TeamState {}
 
-class TeamError extends TeamState {
+class TeamMemberError extends TeamState {
   final String errorMessage;
-  TeamError(this.errorMessage);
+  TeamMemberError(this.errorMessage);
+}
+
+class InvalidTeamMember extends TeamMemberError {
+  InvalidTeamMember() : super("Invalid user email");
+}
+
+class TeamMemberExists extends TeamMemberError {
+  TeamMemberExists() : super("Member already exists in team");
+}
+
+class TeamMemberDoesNotExist extends TeamMemberError {
+  TeamMemberDoesNotExist() : super("User does not exist");
 }
 
 class TeamCreated extends TeamState {}
