@@ -17,6 +17,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(UserLoading());
         final userCredential = await service.createUser(event.email, event.password);
         if (userCredential.user != null) {
+          service.setNewUserRecord(event.email);
           add(UserSignIn(event.email, event.password));
         } else {
           emit(UserError(errorMessage: "Something went wrong, Try again!"));

@@ -21,6 +21,12 @@ class FirebaseService {
 
   Future<UserCredential> createUser(String email, String password) =>
     auth.createUserWithEmailAndPassword(email: email, password: password);
+  
+  Future<void> setNewUserRecord(String userEmail) async {
+    await db.collection(_notesAllKey).doc(userEmail).set({
+      'notes_order': [],
+    });
+  }
 
   Future<UserCredential> signInUser(String email, String password) =>
     auth.signInWithEmailAndPassword(email: email, password: password);
@@ -29,6 +35,7 @@ class FirebaseService {
 
   // FIRESTORE
 
+  String get _notesAllKey => 'notes';
   String get _userNotesKey => 'notes/${user.email}';
   String get _userAllNotesKey => 'notes/${user.email}/all';
   String get _userTeamsKey => 'notes/${user.email}/teams';
@@ -114,6 +121,11 @@ class FirebaseService {
         {'id': doc.id, 'user': userEmail, ...doc.data()!},
       )
     );
+  }
+
+  Future<bool> userEmailExists(String userEmail) async {
+    final userDoc = await db.collection(_notesAllKey).doc(userEmail).get();
+    return userDoc.exists;
   }
 
   Future<TeamMember> editOrCreateTeamMember(String userEmail, String teamId, TeamMemberRole role) async {
