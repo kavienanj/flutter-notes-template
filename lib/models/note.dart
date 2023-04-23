@@ -27,7 +27,7 @@ class Note {
       json['title'],
       json['description'],
       json['created_by'],
-      json['created_at'],
+      (json['created_at'] as Timestamp).toDate(),
       (json['edit_history'] as Map).map<String, DateTime>(
         (key, value) => MapEntry(key, (value as Timestamp).toDate()),
       ),
@@ -39,7 +39,7 @@ class Note {
       'title': title,
       'description': description,
       'created_by': createdBy,
-      'created_at': createdAt,
+      'created_at': Timestamp.fromDate(createdAt),
       'edit_history': editHistory.map<String, Timestamp>(
         (key, value) => MapEntry(key, Timestamp.fromDate(value)),
       ),
