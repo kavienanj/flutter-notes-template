@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_notes_template/bloc/note_bloc/note_bloc.dart';
 import 'package:flutter_notes_template/models/note.dart';
 import 'package:flutter_notes_template/models/team.dart';
@@ -37,38 +38,58 @@ class NoteCard extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.circular(10.0),
       elevation: 4,
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-        minLeadingWidth: 0,
-        minVerticalPadding: 0,
-        onTap: disableEdit
-          ? () => _showStaticNoteDialog(context)
-          : () => _showEditNoteDialog(context),
-        tileColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        title: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-          child: Text(
-            hasTitle ? note!.title : 'New Note',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: hasTitle ? Colors.black : Colors.grey,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+            minLeadingWidth: 0,
+            minVerticalPadding: 0,
+            onTap: disableEdit
+              ? () => _showStaticNoteDialog(context)
+              : () => _showEditNoteDialog(context),
+            tileColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+            title: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+              child: Text(
+                hasTitle ? note!.title : 'New Note',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: hasTitle ? Colors.black : Colors.grey,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            subtitle: Text(
+              hasDescription ? note!.description : "What's in your mind?",
+              style: TextStyle(
+                fontSize: 16,
+                color: hasDescription ? Colors.black : Colors.grey,
+              ),
+              overflow: TextOverflow.fade,
+            ),
           ),
-        ),
-        subtitle: Text(
-          hasDescription ? note!.description : "What's in your mind?",
-          style: TextStyle(
-            fontSize: 16,
-            color: hasDescription ? Colors.black : Colors.grey,
+          if (note != null) Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8, bottom: 5),
+              child: Text(
+                'Edited ${timeago.format(note!.lastEditedTime)}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w100,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
           ),
-          overflow: TextOverflow.fade,
-        ),
+        ],
       ),
     );
   }

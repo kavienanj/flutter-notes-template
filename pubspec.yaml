@@ -44,6 +44,7 @@ dependencies:
   cloud_firestore: ^4.5.0
   bloc_concurrency: ^0.2.1
   reorderable_grid: ^1.0.6
+  timeago: ^3.3.0
 
 dev_dependencies:
   flutter_test:

@@ -19,7 +19,18 @@ class Note {
 
   bool get hasContent => title.isNotEmpty || description.isNotEmpty;
 
-  static final empty = Note('empty', 'empty', 'empty', 'empty', DateTime(0), {});
+  static final empty = Note('empty', 'empty', 'empty', 'empty', DateTime(0), const {});
+
+  DateTime get lastEditedTime {
+    if (editHistory.isEmpty) return createdAt;
+    var lastEdit = editHistory.entries.first.value;
+    for (var entry in editHistory.entries) {
+      if (entry.value.isAfter(lastEdit)) {
+        lastEdit = entry.value;
+      }
+    }
+    return lastEdit;
+  }
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
