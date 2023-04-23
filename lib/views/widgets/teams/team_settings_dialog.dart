@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_notes_template/bloc/user_bloc/user_bloc.dart';
+import 'package:flutter_notes_template/bloc/team_bloc/team_bloc.dart';
+import 'package:flutter_notes_template/models/team_member.dart';
 import 'package:flutter_notes_template/services/firebase_service.dart';
 
 class FixedValueDropdown extends StatelessWidget {
@@ -76,8 +77,8 @@ class TeamMemberPermissionsEditField extends StatelessWidget {
 }
 
 class TeamSettingsDialog extends StatelessWidget {
-  const TeamSettingsDialog({super.key, required this.teamId});
-  final String teamId;
+  const TeamSettingsDialog({super.key, required this.teamMember});
+  final TeamMember teamMember;
 
   Widget _loadingOrErrorView(AsyncSnapshot snapshot) => snapshot.hasError
     ? const Center(child: Text("Something went wrong try again!"))
@@ -86,10 +87,8 @@ class TeamSettingsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = context.read<FirebaseService>();
-    final userBloc = context.read<UserBloc>();
-    final userEmail = (userBloc.state as UserSuccess).user.email!;
     return StreamBuilder(
-      stream: service.getTeamStream(teamId),
+      stream: service.getTeamStream(teamMember.teamId),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return _loadingOrErrorView(snapshot);
         final team = snapshot.data!;
@@ -120,33 +119,54 @@ class TeamSettingsDialog extends StatelessWidget {
             ),
             Row(
               children: [
-                Text(team.owner),
+                Text(
+                  teamMember.isOwner
+                    ? 'You (${teamMember.userEmail})'
+                    : team.owner,
+                ),
                 const SizedBox(width: 16),
                 const FixedValueDropdown(value: 'Owner'),
               ],
             ),
-            for (final member in team.members) 
-              TeamMemberPermissionsEditField(
-                userEmail: member,
-                teamId: team.id,
-                editAdmins: team.owner == userEmail,
-              ),
+            if (!teamMember.isOwner) Row(
+              children: [
+                Text('You (${teamMember.userEmail})'),
+                const SizedBox(width: 16),
+                const FixedValueDropdown(value: 'Admin'),
+              ],
+            ),
+            for (final memberEmail in team.members) 
+              if (memberEmail != teamMember.userEmail)
+                TeamMemberPermissionsEditField(
+                  userEmail: memberEmail,
+                  teamId: team.id,
+                  editAdmins: team.owner == teamMember.userEmail,
+                ),
             TextButton.icon(
               onPressed: () {},
               icon: const Icon(Icons.add),
               label: const Text('Add New Member'),
             ),
             const SizedBox(height: 16),
-            team.owner == userEmail
+            teamMember.isOwner
               ? ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<TeamBloc>().add(TeamDelete(team));
+                    Navigator.of(context).pop();
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.red),
                   ),
                   child: const Text('Delete Team'),
                 )
               : ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<TeamBloc>().add(TeamMemberRemove(
+                      team: team,
+                      teamMember: teamMember,
+                    ));
+                    Navigator.of(context).pop();
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.red),
                   ),

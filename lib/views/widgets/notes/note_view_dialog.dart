@@ -19,7 +19,7 @@ class NoteViewDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+              padding: const EdgeInsets.fromLTRB(0, 5, 0, 20),
               child: Text(
                 note.title,
                 style: const TextStyle(

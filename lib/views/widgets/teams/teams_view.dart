@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_notes_template/bloc/team_bloc/team_bloc.dart';
 import 'package:flutter_notes_template/models/team.dart';
 import 'package:flutter_notes_template/models/team_member.dart';
 import 'package:flutter_notes_template/services/firebase_service.dart';
@@ -48,13 +49,18 @@ class TeamsView extends StatelessWidget {
               ? IconButton(
                   onPressed: () => showDialog(
                     context: context,
-                    builder: (context) => TeamSettingsDialog(teamId: team.id),
+                    builder: (context) => TeamSettingsDialog(teamMember: teamMember),
                   ),
                   tooltip: "Team Settings",
                   icon: const Icon(Icons.settings),
                 )
               : IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<TeamBloc>().add(TeamMemberRemove(
+                      team: team,
+                      teamMember: teamMember,
+                    ));
+                  },
                   tooltip: "Leave Team",
                   icon: const Icon(Icons.exit_to_app),
                 ),
