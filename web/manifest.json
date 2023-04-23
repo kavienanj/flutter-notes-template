@@ -1,11 +1,11 @@
 {
-    "name": "flutter_notes_template",
-    "short_name": "flutter_notes_template",
+    "name": "Notes App",
+    "short_name": "Notes App",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A simple notes managing website",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
