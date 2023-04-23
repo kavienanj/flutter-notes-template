@@ -46,3 +46,20 @@ class CustomReactivePasswordField extends StatelessWidget {
     );
   }
 }
+
+class FixedValueDropdown extends StatelessWidget {
+  const FixedValueDropdown({super.key, required this.value,});
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton(
+      value: value,
+      items: [DropdownMenuItem(
+        value: value,
+        child: Text(value),
+      )],
+      onChanged: null,
+    );
+  }
+}
