@@ -72,6 +72,10 @@ class FirebaseService {
     await db.collection(_teamAllNotesKey(team)).doc(note.id).delete();
   }
 
+  Future<void> deleteTeamAllNotes(Team team) async {
+    await db.doc(_teamNotesKey(team)).delete();
+  }
+
   Future<List<String>?> getNotesOrderFuture() async {
     final notesOrderDoc = await db.doc(_userNotesKey).get();
     return (notesOrderDoc.data()?["notes_order"] as List?)?.cast<String>();

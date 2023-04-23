@@ -30,6 +30,7 @@ class TeamBloc extends Bloc<TeamEvent, TeamState> {
         service.deleteTeamMember(memberEmail, event.team.id);
       }
       await service.deleteTeam(event.team);
+      await service.deleteTeamAllNotes(event.team);
       emit(TeamDeleted());
     });
 
