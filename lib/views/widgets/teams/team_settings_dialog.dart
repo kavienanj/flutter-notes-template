@@ -17,11 +17,14 @@ class TeamSettingsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final service = context.read<FirebaseService>();
+    final teamBloc = context.read<TeamBloc>();
+    TextEditingController? teamNameController;
     return StreamBuilder(
       stream: service.getTeamStream(teamMember.teamId),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return _loadingOrErrorView(snapshot);
         final team = snapshot.data!;
+        teamNameController ??= TextEditingController(text: team.name);
         return SimpleDialog(
           contentPadding: const EdgeInsets.all(16.0),
           shape: RoundedRectangleBorder(
@@ -42,7 +45,15 @@ class TeamSettingsDialog extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: TextField(
-                    controller: TextEditingController(text: team.name),
+                    controller: teamNameController,
+                    onChanged: (newName) => teamBloc.add(
+                      TeamNameChange(
+                        team: team,
+                        name: newName.isNotEmpty
+                          ? newName
+                          : "Team"
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -81,7 +92,7 @@ class TeamSettingsDialog extends StatelessWidget {
             teamMember.isOwner
               ? ElevatedButton(
                   onPressed: () {
-                    context.read<TeamBloc>().add(TeamDelete(team));
+                    teamBloc.add(TeamDelete(team));
                     Navigator.of(context).pop();
                   },
                   style: ButtonStyle(
@@ -91,7 +102,7 @@ class TeamSettingsDialog extends StatelessWidget {
                 )
               : ElevatedButton(
                   onPressed: () {
-                    context.read<TeamBloc>().add(TeamMemberRemove(
+                    teamBloc.add(TeamMemberRemove(
                       team: team,
                       teamMember: teamMember,
                     ));
