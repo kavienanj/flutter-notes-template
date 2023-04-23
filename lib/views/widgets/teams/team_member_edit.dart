@@ -14,17 +14,15 @@ class TeamMemberPermissionsEditField extends StatelessWidget {
   final String teamId;
   final bool editAdmins;
 
-  Widget _loadingOrErrorView(AsyncSnapshot snapshot) => snapshot.hasError
-    ? const Center(child: Text("Something went wrong try again!"))
-    : const Center(child: CircularProgressIndicator());
-
   @override
   Widget build(BuildContext context) {
     final service = context.read<FirebaseService>();
     return StreamBuilder(
       stream: service.getTeamMemberStream(userEmail, teamId),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return _loadingOrErrorView(snapshot);
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
         final teamMember = snapshot.data!;
         return Row(
           children: [

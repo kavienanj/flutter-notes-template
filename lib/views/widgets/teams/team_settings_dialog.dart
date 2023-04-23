@@ -18,6 +18,7 @@ class TeamSettingsDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final service = context.read<FirebaseService>();
     final teamBloc = context.read<TeamBloc>();
+    final newMemberEmailController = TextEditingController();
     TextEditingController? teamNameController;
     return StreamBuilder(
       stream: service.getTeamStream(teamMember.teamId),
@@ -83,10 +84,29 @@ class TeamSettingsDialog extends StatelessWidget {
                   teamId: team.id,
                   editAdmins: team.owner == teamMember.userEmail,
                 ),
-            TextButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.add),
-              label: const Text('Add New Member'),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: newMemberEmailController,
+                    decoration: const InputDecoration(
+                      hintText: 'Email address',
+                    ),
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    teamBloc.add(TeamMemberAdd(
+                      userEmail: newMemberEmailController.text,
+                      team: team,
+                      role: TeamMemberRole.editor,
+                    ));
+                    newMemberEmailController.clear();
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add Member'),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             teamMember.isOwner
