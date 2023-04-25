@@ -16,4 +16,10 @@ class NoteEdit extends NoteEvent {
   NoteEdit({this.title, this.description});
 }
 
+class NoteDelete extends NoteEvent {
+  final Note note;
+  
+  NoteDelete(this.note);
+}
+
 class NoteClose extends NoteEvent {}

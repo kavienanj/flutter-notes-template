@@ -39,6 +39,10 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       emit(NoteTouched(newNote));
     }, transformer: sequential());
 
+    on<NoteDelete>((event, emit) async {
+      _deleteNote(event.note);
+    });
+
     on<NoteClose>((event, emit) async {
       if (state is NoteTouched) {
         final note = (state as NoteTouched).note;

@@ -32,6 +32,23 @@ class Note {
     return lastEdit;
   }
 
+  String get lastEditedUser {
+    if (editHistory.isEmpty) return createdBy;
+    var lastEdit = editHistory.entries.first;
+    for (var entry in editHistory.entries) {
+      if (entry.value.isAfter(lastEdit.value)) {
+        lastEdit = entry;
+      }
+    }
+    return lastEdit.key;
+  }
+
+  Map<String, DateTime> get sortedEditHistory {
+    final sortedKeys = editHistory.keys.toList(growable: false)
+      ..sort((k1, k2) => editHistory[k1]!.compareTo(editHistory[k2]!));
+    return {for (var key in sortedKeys) key: editHistory[key]!};
+  }
+
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
       json['id'],
