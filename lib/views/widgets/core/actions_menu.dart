@@ -14,10 +14,10 @@ class ActionsPopupMenu extends StatelessWidget {
     return PopupMenuButton<int>(
       offset: const Offset(0, 55),
       itemBuilder: (context) => [
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 0,
           child: Row(
-            children: const [
+            children: [
               Icon(Icons.add, color: Colors.black),
               SizedBox(width: 10),
               Text(
@@ -27,10 +27,10 @@ class ActionsPopupMenu extends StatelessWidget {
             ],
           ),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 1,
           child: Row(
-            children: const [
+            children: [
               Icon(Icons.logout, color: Colors.black),
               SizedBox(width: 10),
               Text(
